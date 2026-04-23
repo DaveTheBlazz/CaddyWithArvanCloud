@@ -1,25 +1,35 @@
 name: Build Caddy
 
-on: [push]
+on:
+  workflow_dispatch:   # اجرای دستی
+  push:                # یا با push
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
 
       - name: Install xcaddy
         run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
-      - name: Build Caddy
+      - name: Build Caddy with Arvan plugin
         run: |
           xcaddy build \
             --with github.com/caddy-dns/arvancloud
 
+      - name: Rename for Windows
+        run: mv caddy caddy.exe
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: caddy
-          path: ./caddy
+          name: caddy-build
+          path: caddy.exe
