@@ -1,15 +1,15 @@
-name: Build Caddy
+name: Build Caddy Windows
 
 on:
-  workflow_dispatch:   # اجرای دستی
-  push:                # یا با push
+  workflow_dispatch:
+  push:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest   # ← فقط ویندوز
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Go
@@ -20,16 +20,14 @@ jobs:
       - name: Install xcaddy
         run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
-      - name: Build Caddy with Arvan plugin
+      - name: Build Caddy (Windows)
         run: |
-          xcaddy build \
-            --with github.com/caddy-dns/arvancloud
+          xcaddy build ^
+            --with github.com/caddy-dns/arvancloud ^
+            --output caddy.exe
 
-      - name: Rename for Windows
-        run: mv caddy caddy.exe
-
-      - name: Upload artifact
+      - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: caddy-build
+          name: caddy-windows
           path: caddy.exe
