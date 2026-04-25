@@ -1,3 +1,4 @@
+
 name: Build Caddy (Windows + Artifact)
 
 on:
